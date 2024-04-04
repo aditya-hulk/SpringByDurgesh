@@ -67,4 +67,184 @@
     
 ![alt text](image-19.png)![alt text](image-20.png)![alt text](image-21.png)![alt text](image-22.png)
 # 6. Practical
+![alt text](image-23.png)
+### 1) Create a maven project
+![alt text](image-24.png)![alt text](image-25.png)![alt text](image-26.png)![alt text](image-27.png)
+### 2) Adding dependencies
+##### spring core and context we require.
+![alt text](image-29.png)
+##### If you encounter with error then update the project
+![alt text](image-30.png)
+- Right Clk -> maven -> update project
+##### U can also update java 
+![alt text](image-31.png)![alt text](image-32.png)![alt text](image-33.png)![alt text](image-34.png)![alt text](image-35.png)
+### 3) Creating beans
+![alt text](image-36.png)
+- create fileds with Constructor default + parameterized then Getter & setters then toString() method.
+### 4) Creating configuration file & 5) Setter Injection
+###### Create xml file - New then other
+![alt text](image-37.png)![alt text](image-38.png)![alt text](image-39.png)![alt text](image-40.png)![alt text](image-41.png)
+- Add dtd beans,context and p schema.
+
+##### Pom.xml
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.adi.springcore</groupId>
+	<artifactId>springcore</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>springcore</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>6.1.0</version>
+		</dependency>
+
+		<!--
+		https://mvnrepository.com/artifact/org.springframework/spring-context -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>6.1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>
+```
+##### Student Pojo
+```java
+package com.adi.springcore;
+
+public class Student {
+
+	private String studentId;
+	private String studentName;
+	private String studentAddress;
+
+	public Student() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Student(String studentId, String studentName, String studentAddress) {
+		super();
+		this.studentId = studentId;
+		this.studentName = studentName;
+		this.studentAddress = studentAddress;
+	}
+
+	public String getStudentId() {
+		return studentId;
+	}
+
+	public void setStudentId(String studentId) {
+		System.out.println("Setter injection is getting called for id");
+		this.studentId = studentId;
+	}
+
+	public String getStudentName() {
+		return studentName;
+	}
+
+	public void setStudentName(String studentName) {
+		System.out.println("Setter injection is getting called for name" );
+		this.studentName = studentName;
+	}
+
+	public String getStudentAddress() {		
+		return studentAddress;
+	}
+
+	public void setStudentAddress(String studentAddress) {
+		System.out.println("Setter injection is getting called for address");
+		this.studentAddress = studentAddress;
+	}
+
+	@Override
+	public String toString() {
+		return "Student [studentId=" + studentId + ", studentName=" + studentName + ", studentAddress=" + studentAddress
+				+ "]";
+	}
+
+}
+```
+##### config.xml
+```xml
+<?xml version="1.0" encoding="UTF-8"?>     
+   <beans xmlns="http://www.springframework.org/schema/beans"     
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:p="http://www.springframework.org/schema/p" 
+   xsi:schemaLocation="http://www.springframework.org/schema/beans 
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context.xsd
+   ">
+     
+     <!-- This is our bean 
+      		here we add dtd of bean, context and pschema
+      -->
+     <bean class="com.adi.springcore.Student"  name="student1">
+     	<property name="studentId">
+     		<value>12334</value>
+     	</property>
+     	     	
+     	<property name="studentName">
+     		<value>Aditya Rathor</value>
+     	</property>
+     	     	
+     	<property name="studentAddress">
+     		<value>Nagpur</value>
+     	</property>
+     </bean>
+     
+ </beans>
+```
+### 6) Main class
+##### App.java
+```java
+package com.adi.springcore;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+/**
+ * Hello world!
+ *
+ */
+public class App 
+{
+    public static void main( String[] args )
+    {
+    	System.out.println("Hello_world");
+        ApplicationContext context = new ClassPathXmlApplicationContext("com/adi/springcore/config.xml");
+        Student  student = (Student) context.getBean("student1");
+        System.out.println(student);
+    }
+}
+```
+#### Ab yadi hume change karna hai name toh humko code compile karne ki jarurat nhi .. sirf config file mein change karo and run it kafi hai.
+![alt text](image-42.png)![alt text](image-43.png)
+# 7. Property injection using p schema and using value as an attribute.
+
 

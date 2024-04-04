@@ -5,5 +5,6 @@
 ### 4. Spring IOC container.
 ### 5. Ways of Injecting dependency.
 ### 6. Practical
+### 7. Property injection using p schema and using value as an attribute.
 
 
