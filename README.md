@@ -37,4 +37,34 @@
 - web oriented feature provide karta.
 ### Test module
 - Unit testing like JUNIT and mokito.
+# 4. Spring IOC container.
+![alt text](image-12.png)
+- Spring ke sath hume ek component/container milta hai, jise hum Spring IOC  container kehte hai.
+- It is responsible for.
+    - Basically ye object ko create karta.
+    - hold that object in memory
+    - whenever require ye inject karta dependency.
+- Basically it manage the life cyle object.
+#### So spring container is a predefined program which manage the life cyle of object.
+![alt text](image-13.png)![alt text](image-14.png)
+# 5. Ways of Injecting dependency.
+![alt text](image-15.png)
+- As per above dig, Student class depend hai Address class ke object ke upar
+- So IOC container sabse pehele Address class ki sari value set/intitialize  karke uska object create Karenga.
+- Phir Student class ka object create karte hue, uski  id aur name initialize karenge and Address class ki object inject Karenga Student class attribute address mein.
+- is tarah se student class ka bean i.e object create honga. Jise hum use kar sakte hai.
+
+![alt text](image-16.png)![alt text](image-17.png)
+- For Setter Injection
+    - aapko apne class mein Setter methods define karni hongi.
+- Object create karte waqt container call karenga setter methods.
+    - Address class ka object create karte waqt container uski setter method call karke sari value initialize kar lenga.
+- Similarly Student object create karte waqt IOC container call karenga setter method but jab setAddreess() method call karenga so waha IOC container Address class ki dependency inject kar denga.
+
+![alt text](image-18.png)
+- Constructor injection ke liye aapko class mein constructor likhna  honga.
+- Object create  karte waqt IOC Conatiner constructor call karenga instead of setter method.
+    
+![alt text](image-19.png)![alt text](image-20.png)![alt text](image-21.png)![alt text](image-22.png)
+# 6. Practical
 
