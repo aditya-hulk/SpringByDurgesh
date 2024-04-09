@@ -246,5 +246,333 @@ public class App
 #### Ab yadi hume change karna hai name toh humko code compile karne ki jarurat nhi .. sirf config file mein change karo and run it kafi hai.
 ![alt text](image-42.png)![alt text](image-43.png)
 # 7. Property injection using p schema and using value as an attribute.
+### IN previous video we inject property via Value as Tag/element.
+![alt text](image-44.png)
+###  Inject Property via Value as an Attribute
+![alt text](image-45.png)
+### If you want to create another object then create another bean
+![alt text](image-46.png)![alt text](image-47.png)
+### Inejct Property via Value as an P Schema
+![alt text](image-48.png)
+# 8. How to inject collection types i.e List,Set,Map and Properties.
+- In previous video we see, how ***primitive  data type** will be injected by setter or property injection
+    - via Value as an element/tag
+    - via value as an attribute
+    - via value as p schema.
 
+![alt text](image-49.png)
+### How Collection data type will be inject by setter or property injection
+#### For List
+- List can contain duplicate element
+- we use List tag for inserting vlaue in list
+- for null we simply write null tag.
+
+![alt text](image-50.png)
+#### For Set
+- Set does not allow duplicate element
+- we use set tag for inserting value in Set
+
+![alt text](image-51.png)
+#### For Map
+- We use Map tag for inserting value in Map
+- Map is nothing but group of entries
+- Inside entry we have key-value pair.
+
+![alt text](image-52.png)
+#### For Properties
+- We use props tag for inserting value in Properties
+- Inside Props tag we use prop tag to specify key
+- And we specify value in body part
+
+![alt text](image-53.png)
+# 9. Practical
+### Create a separate package and write your code there.
+#### Emp.java
+```java
+package com.springcore.collections;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public class Emp {
+
+	private String name;
+	// Employee having multiple phone numbers
+	private List<String> phones;
+	// Employee have multiple address
+	private Set<String> address;
+	// Employee doing multiple courses having certain duration/price
+	private Map<String, String> courses;
+
+	public Emp(String name, List<String> phones, Set<String> address, Map<String, String> courses) {
+		super();
+		this.name = name;
+		this.phones = phones;
+		this.address = address;
+		this.courses = courses;
+	}
+
+	public Emp() {
+		super();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public List<String> getPhones() {
+		return phones;
+	}
+
+	public void setPhones(List<String> phones) {
+		this.phones = phones;
+	}
+
+	public Set<String> getAddress() {
+		return address;
+	}
+
+	public void setAddress(Set<String> address) {
+		this.address = address;
+	}
+
+	public Map<String, String> getCourses() {
+		return courses;
+	}
+
+	public void setCourses(Map<String, String> courses) {
+		this.courses = courses;
+	}
+
+	@Override
+	public String toString() {
+		return "Emp [name=" + name + ", phones=" + phones + ", address=" + address + ", courses=" + courses + "]";
+	}
+
+	
+}
+```
+#### configuration file
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context.xsd
+   ">
+   
+	<bean class="com.springcore.collections.Emp" name="employee" >	
+		<property name="name" value="Radhe" />
+		
+		<property name="phones">
+			<list>
+				<value>34343435</value>
+				<value>121334</value>
+				<null></null>
+			</list>
+		</property>
+		
+		<property name="address">
+			<set>
+				<value>Delhi</value>
+				<value>Nagpur</value>
+				<value>Ayodhya</value>
+			</set>
+		</property>
+		
+		<property name="courses">
+			<map>
+				<entry key="java" value="2months" />
+				<entry key="Sql" value="1 months" />
+			</map>
+		</property>		
+		
+		
+	</bean>
+</beans>
+```
+#### Main app
+```java
+package com.springcore.collections;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestCollecitonInjection {
+
+	public static void main(String[] args) {
+		
+		ApplicationContext context = new ClassPathXmlApplicationContext("com/springcore/collections/configCollection.xml");
+
+		
+		Emp emp1 = (Emp) context.getBean("employee");
+		
+		System.out.println(emp1);
+		System.out.println("-------------");
+		System.out.println("Name is :          "+ emp1.getName());
+		System.out.println("List of phones : "+emp1.getPhones());
+		System.out.println("Set of address : "+emp1.getAddress());
+		System.out.println("Map of courses : "+emp1.getCourses());
+	}
+
+}
+```
+#### Output
+```
+Emp [name=Radhe, phones=[34343435, 121334, null], address=[Delhi, Nagpur, Ayodhya], courses={java=2months, Sql=1 months}]
+-------------
+Name is :          Radhe
+List of phones : [34343435, 121334, null]
+Set of address : [Delhi, Nagpur, Ayodhya]
+Map of courses : {java=2months, Sql=1 months}
+```
+### Some modification 
+#### If your list contain only 1 value, then you need not to provide explicitly list tag
+![alt text](image-54.png)
+#### If you require blank list
+![alt text](image-55.png)
+# 10. Injecting Refrence type 
+![alt text](image-58.png)
+### Injecting Ref as an element
+![alt text](image-59.png)
+### A.java
+```java
+package com.springcore.ref;
+
+public class A {
+
+	private int x;
+
+	private B ob;
+
+	public A() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public B getOb() {
+		return ob;
+	}
+
+	public void setOb(B ob) {
+		this.ob = ob;
+	}
+
+	@Override
+	public String toString() {
+		return "A [x=" + x + ", ob=" + ob + "]";
+	}
+
+}
+```
+### B.java
+```java
+package com.springcore.ref;
+
+public class B {
+
+	private int y;
+
+	public B() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	@Override
+	public String toString() {
+		return "B [y=" + y + "]";
+	}
+
+}
+```
+### configuration file
+```xml
+<?xml version="1.0" encoding="UTF-8"?>     
+   <beans xmlns="http://www.springframework.org/schema/beans"     
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:p="http://www.springframework.org/schema/p" 
+   xsi:schemaLocation="http://www.springframework.org/schema/beans 
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context.xsd
+   ">
+	
+	<bean class="com.springcore.ref.B" name="bref" p:y="12" />	
+	
+	<bean class="com.springcore.ref.A" name="aref">
+		<property name="x" value="20"/>
+		<property name="ob">
+			<ref bean="bref"/>
+		</property>
+	</bean>  
+     
+ </beans>
+```
+### main class
+```java
+package com.springcore.ref;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestRef {
+
+	public static void main(String[] args) {
+
+		ApplicationContext context = new 
+				ClassPathXmlApplicationContext("com/springcore/ref/configRef.xml");
+
+		A temp = (A) context.getBean("aref");
+
+		System.out.println(temp);
+		System.out.println("============");
+		System.out.println("x value is : "+ temp.getX());
+		System.out.println("y value is : "+ temp.getOb().getY());
+	}
+
+}
+```
+### Output
+```
+A [x=20, ob=B [y=12]]
+============
+x value is : 20
+y value is : 12
+```
+### In previous example we use refrecne as an element
+### Now we use Refrence as an attribute
+![alt text](image-56.png)
+### You can use Refrence via pschema
+![alt text](image-57.png)
+# 11. Constructor Injection
+
+
+
+    
 

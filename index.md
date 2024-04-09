@@ -6,5 +6,10 @@
 ### 5. Ways of Injecting dependency.
 ### 6. Practical
 ### 7. Property injection using p schema and using value as an attribute.
+### 8. How to inject collection types i.e List,Set,Map and Properties.
+### 9. Practical
+### 10. Injecting Refrence type 
+### 11. Constructor Injection
+
 
 
