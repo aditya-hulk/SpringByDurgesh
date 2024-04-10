@@ -571,7 +571,207 @@ y value is : 12
 ### You can use Refrence via pschema
 ![alt text](image-57.png)
 # 11. Constructor Injection
+![alt text](image-60.png)![alt text](image-61.png)
+### Person.java
+```java
+package com.adi.springcore.constInject;
 
+public class Person {
+
+	private String name;
+	private int personId;
+
+	// yaha hum spring ki sahyata se
+	// constructor ke through value inject karni hai
+  // so for that constructor required.
+	
+	public Person(String name, int personId) {
+		this.name = name;
+		this.personId = personId;
+	}
+
+	@Override
+	public String toString() {
+		return  this.name + " : "+ this.personId;
+	}
+}
+```
+### configuration
+```xml
+<?xml version="1.0" encoding="UTF-8"?>     
+   <beans xmlns="http://www.springframework.org/schema/beans"     
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:p="http://www.springframework.org/schema/p" 
+   xsi:schemaLocation="http://www.springframework.org/schema/beans 
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context.xsd
+   ">
+     
+     <!-- U can also use cSchema like pschema
+     	cSchema is used for injecting value in constructor
+     	 For each paramerter 1 constructor-arg is required
+     	-->
+     
+  	<bean class="com.adi.springcore.constInject.Person" name="person">
+  	
+  	<!-- Here we use value as tag in constructor -->
+  		<constructor-arg>
+  			<value>Aditya</value>
+  		</constructor-arg>
+  		
+  		<!-- Value as an attribute 
+  	by default constructor-arg ye stirng type ke value leta
+  		u can also explicityly specify ki iska type kya hai -->
+  		<constructor-arg value="21"  type="int"/>
+  	</bean>
+  	
+  	<!-- 
+  		1) Ye upar ki bean Person class ke wo constructor ko call karengi
+  			jiska 1st arg is String and 2nd is int
+  	 -->
+     
+ </beans>
+```
+### Main class
+```java
+package com.adi.springcore.constInject;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestCi {
+
+	public static void main(String[] args) {
+
+		ApplicationContext context = new 
+			ClassPathXmlApplicationContext("com/adi/springcore/constInject/ciConfig.xml");
+		
+		Person p =(Person) context.getBean("person");
+		
+		System.out.println(p);
+
+	}
+
+}
+```
+### Ouptut
+```
+Aditya : 21
+```
+### Ab yadi hum configuration file se type="int" nikal de tab output kya aavenga
+![alt text](image-62.png)
+- abhi bhi proper output aa raha hai;
+- kyuki yaha sirf ek hi constructor hai and i.e Person(String,int)
+    - so Spring yaha intelligency dikhate hue
+    - ye wala hi constructor call kar raha hai
+    - That's why output comes
+- Yadi Person class mein 2 parametrized constructor hote i.e Person(Sting,int) and Person(String,String)
+    - tab spring intelligency nhi dikha pata
+    - aur Persono(String,String) wala constructor call karta
+- This above problem is called amibguity problem
+- To resolve ambiguity problem always specify type keyword in constructor-arg.
+### Check out refrence type parameter
+![alt text](image-63.png)
+### Certi.java
+```java
+package com.adi.springcore.constInject;
+
+public class Certi {
+
+	 String name;
+
+	public Certi(String name) {
+		super();
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return this.name;
+	}
+
+}
+```
+### Person.java
+```java
+package com.adi.springcore.constInject;
+
+public class Person {
+
+	private String name;
+	private int personId;
+	private Certi certi;
+
+	public Person(String name, int personId,Certi certi) {
+		this.name = name;
+		this.personId = personId;
+		this.certi = certi;
+	}
+
+	@Override
+	public String toString() {
+		return  this.name + " : "+ this.personId + " = { "+this.certi.name+" }";
+	}
+}
+```
+### configuration file
+```xml
+<?xml version="1.0" encoding="UTF-8"?>     
+   <beans xmlns="http://www.springframework.org/schema/beans"     
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:p="http://www.springframework.org/schema/p" 
+   xmlns:c="http://www.springframework.org/schema/c" 
+   xsi:schemaLocation="http://www.springframework.org/schema/beans 
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context.xsd
+   ">
+   
+   <!--  implementation via C shema -->
+   <bean class="com.adi.springcore.constInject.Certi" name="cer" c:name="Spring Certificate" />
+   	
+  
+  	<bean class="com.adi.springcore.constInject.Person" name="person">
+  	
+  		<constructor-arg value="Aditya" />  
+  		<constructor-arg value="34"  />
+  		
+  		<!-- Passing refrence type in constructor -->
+  		<constructor-arg ref="cer" />
+  		
+  	</bean>
+
+	
+ </beans>
+```
+### main class
+```java
+package com.adi.springcore.constInject;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestCi {
+
+	public static void main(String[] args) {
+
+		ApplicationContext context = 
+				new ClassPathXmlApplicationContext("com/adi/springcore/constInject/ciConfig.xml");
+
+		Person p = (Person) context.getBean("person");
+
+		System.out.println(p);
+
+	}
+
+}
+Output:
+Aditya : 34 = { Spring Certificate }
+```
+# 12. Ambiguity problem and its solution via CI
 
 
     
