@@ -772,6 +772,244 @@ Output:
 Aditya : 34 = { Spring Certificate }
 ```
 # 12. Ambiguity problem and its solution via CI
+### Create Addition class
+```java
+package com.adi.springcore.constInject.ambiguity;
+
+public class Addition {
+
+	private int a;
+	private int b;
+	
+    //costructor 1st as int, int
+	public Addition(int a,int b) {
+		this.a=a;
+		this.b=b;
+		System.out.println("Constructor : int , int");
+	}
+	
+    //const 2nd as double,double
+	public Addition(double a,double b) {
+		this.a=(int) a;
+		this.b=(int) b;
+		System.out.println("Constructor : double , double");
+	}
+	
+	public void doSum()
+	{
+		System.out.println("sum is = "+ (this.a + this.b));
+	}
+}
+```
+### configuration
+```xml
+<?xml version="1.0" encoding="UTF-8"?>     
+   <beans xmlns="http://www.springframework.org/schema/beans"     
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:p="http://www.springframework.org/schema/p" 
+   xmlns:c="http://www.springframework.org/schema/c" 
+   xsi:schemaLocation="http://www.springframework.org/schema/beans 
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context.xsd
+   ">
+   
+   <!-- Yaha hum Constructor String,String call kar rahe hai..
+    jo ki hai nhi.
+   -->
+  	<bean class="com.adi.springcore.constInject.ambiguity.Addition" name="add">
+  		<constructor-arg value="12" />
+  		<constructor-arg value="20" />
+  	</bean>
+
+	
+ </beans>
+```
+### Main class
+```java
+package com.adi.springcore.constInject.ambiguity;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestAmbiguous {
+
+	public static void main(String[] args) {
+		
+		ApplicationContext context = 
+		  new ClassPathXmlApplicationContext("com/adi/springcore/constInject/ambiguity/ciConfigAmbi.xml");
+		
+		Addition addObj = (Addition) context.getBean("add");
+		
+		addObj.doSum();
+	}
+
+}
+Output:
+Constructor : int , int
+sum is = 32
+```
+### Observation:
+- humne configuration file mein constructor String,String call kiya tha
+- jo hi available hi nhi tha hamare class(Addition )mein
+- to spirng ne constructor int,int call kiya
+### Ab yadi hum constructor ka order change kare toh
+```java
+package com.adi.springcore.constInject.ambiguity;
+
+public class Addition {
+
+	private int a;
+	private int b;
+
+	//1st double,double
+	public Addition(double a, double b) {
+		this.a = (int) a;
+		this.b = (int) b;
+		System.out.println("Constructor : double , double");
+	}
+
+	//2nd int,int
+	public Addition(int a, int b) {
+		this.a = a;
+		this.b = b;
+		System.out.println("Constructor : int , int");
+	}
+
+	public void doSum() {
+		System.out.println("sum is = " + (this.a + this.b));
+	}
+}
+```
+### Run main class & check output
+Constructor : double , double  
+sum is = 32  
+***Jo pehle order mein constructor aaya wo hi call ho raha hai***
+### Ab yadi String,String wala constructor add kiya 
+```java
+package com.adi.springcore.constInject.ambiguity;
+
+public class Addition {
+
+	private int a;
+	private int b;
+
+	public Addition(double a, double b) {
+		this.a = (int) a;
+		this.b = (int) b;
+		System.out.println("Constructor : double , double");
+	}
+
+	public Addition(int a, int b) {
+		this.a = a;
+		this.b = b;
+		System.out.println("Constructor : int , int");
+	}
+
+	public Addition(String a,String b) {
+		this.a = Integer.parseInt(a);
+		this.b = Integer.parseInt(b);
+		System.out.println("Constructor : String , String");
+	}
+	
+	public void doSum() {
+		System.out.println("sum is = " + (this.a + this.b));
+	}
+}
+Output:
+Constructor : String , String
+sum is = 32
+```
+### Observation
+- abhi tak order wise call ho raha tha
+- yadi pehle order ka constructor solution provide karne mein saksham hai
+    - so dusere constructor mien control jata hi nhi tha
+- But now String,String wala constructor call ho raha hai..
+    - Jo bheja hai config file se
+- This is called ambiguity
+- jo config file mein aapne constructor injection ke through value provide kari hai.. usse maan lenga String
+    - fhir check karenga ki class mein koyi String,String ka constructor hai
+    - yadi hai to usse call kar lenga
+    - yadi nhi hai to jo pehle aa raha hai usse call kar lenga.
+
+### but hume keval int,int wala hi constructor call karna hai.. so specify type.
+![alt text](image-64.png)
+### Now focus on values
+![alt text](image-65.png)![alt text](image-66.png)
+### Hum value ko interchange kar sakte via index concept
+![alt text](image-67.png)
+### so constructor injection mein jo ambiguity aati hai
+- wo aap type,index aur order se sort out kar sakte ho.
+```java
+package com.adi.springcore.constInject.ambiguity;
+
+public class Addition {
+
+	private int a;
+	private int b;
+
+	public Addition(double a, double b) {
+		this.a = (int) a;
+		this.b = (int) b;
+		System.out.println("Constructor : double , double");
+	}
+
+	public Addition(int a, int b) {
+		this.a = a;
+		this.b = b;
+		System.out.println("Constructor : int , int");
+	}
+
+	public Addition(String a,String b) {
+		this.a = Integer.parseInt(a);
+		this.b = Integer.parseInt(b);
+		System.out.println("Constructor : String , String");
+	}
+	
+	public void doSum() {
+		System.out.println("value of a = "+ this.a);
+		System.out.println("value of b = "+ this.b);
+		System.out.println("sum is = " + (this.a + this.b));
+	}
+}
+```
+```xml
+<?xml version="1.0" encoding="UTF-8"?>     
+   <beans xmlns="http://www.springframework.org/schema/beans"     
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:p="http://www.springframework.org/schema/p" 
+   xmlns:c="http://www.springframework.org/schema/c" 
+   xsi:schemaLocation="http://www.springframework.org/schema/beans 
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context.xsd
+   ">
+   
+  	<bean class="com.adi.springcore.constInject.ambiguity.Addition" name="add">
+  		<constructor-arg value="10" type="int" index="1"/>
+  		<constructor-arg value="20" type="int"  index="0"/>
+  	</bean>
+	
+ </beans>
+```
+# 13. Life cycle method of Spring Bean
+![alt text](image-68.png)![alt text](image-69.png)![alt text](image-70.png)![alt text](image-71.png)
+### About life cycle of  Servlet and Spring 
+- Servlet ki life cycle mein init(),service() and destroy() aise 3 method hoti hai
+- Spring mein lagbagh same type ki method hoti hai.
+### Fhir Spring aur Servlet ki life cycle mein differnece kya hai
+- Spring ki life cycle mein initialization ie. init() method ye object create karke uski property set karne ke baad call hoti hai.
+- On the contrary servlet mein sabse pehle uski init() method call hoti hai.
+### Explore it
+- jab getBean() call karte tab spring ye tamjham suru karta.
+- kyuki usko bean aur setting sari info mil jati hai.
+# 14. Implementing life cycle method using xml
+
+
+
+
 
 
     

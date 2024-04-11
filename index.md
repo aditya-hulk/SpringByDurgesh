@@ -11,6 +11,10 @@
 ### 10. Injecting Refrence type 
 ### 11. Constructor Injection
 ### 12. Ambiguity problem and its solution via CI
+### 13. Life cycle method of Spring Bean
+### 14. Implementing life cycle method using xml
+
+
 
 
 
